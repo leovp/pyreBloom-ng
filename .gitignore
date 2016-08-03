@@ -58,3 +58,6 @@ target/
 
 # IntelliJ IDEA
 .idea/
+
+# Generated C code
+pyreBloom/pyreBloom.c
