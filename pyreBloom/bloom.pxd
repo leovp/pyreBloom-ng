@@ -30,7 +30,7 @@ cdef extern from "bloom.h":
         int fd
         int flags
         char *obuf
-    
+
     ctypedef struct pyrebloomctxt:
         uint32_t        capacity
         uint32_t        hashes
@@ -47,14 +47,14 @@ cdef extern from "bloom.h":
         uint32_t capacity, float error, char *host, uint32_t port,
         char *password, uint32_t db)
     bint free_pyrebloom(pyrebloomctxt *ctxt)
-    
+
     bint add(pyrebloomctxt *ctxt, char *data, uint32_t data_size)
     bint add_one(pyrebloomctxt *ctxt, char *data, uint32_t data_size)
     int add_complete(pyrebloomctxt *ctxt, uint32_t count)
-    
+
     bint check(pyrebloomctxt *ctxt, char *data, uint32_t data_size)
     int check_next(pyrebloomctxt *ctxt)
-    
+
     bint delete(pyrebloomctxt *ctxt)
-    
+
     uint64_t hash(unsigned char *data, uint32_t data_size, uint64_t seed, uint64_t bits)
