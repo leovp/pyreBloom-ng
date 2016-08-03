@@ -26,7 +26,7 @@ cimport bloom
 
 
 class pyreBloomException(Exception):
-    '''Some sort of exception has happened internally'''
+    """Some sort of exception has happened internally"""
     pass
 
 
@@ -77,13 +77,13 @@ cdef class pyreBloom(object):
         if getattr(value, '__iter__', False):
             r = [bloom.check(&self.context, v, len(v)) for v in value]
             r = [bloom.check_next(&self.context) for i in range(len(value))]
-            if (min(r) < 0):
+            if min(r) < 0:
                 raise pyreBloomException(self.context.ctxt.errstr)
             return [v for v, included in zip(value, r) if included]
         else:
             bloom.check(&self.context, value, len(value))
             r = bloom.check_next(&self.context)
-            if (r < 0):
+            if r < 0:
                 raise pyreBloomException(self.context.ctxt.errstr)
             return bool(r)
 
@@ -91,5 +91,5 @@ cdef class pyreBloom(object):
         return self.contains(value)
 
     def keys(self):
-        '''Return a list of the keys used in this bloom filter'''
+        """Return a list of the keys used in this bloom filter"""
         return [self.context.keys[i] for i in range(self.context.num_keys)]
