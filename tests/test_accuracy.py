@@ -125,9 +125,8 @@ class AllocationTest(BaseTest):
 
         false_positives = self.bloom.intersection(excluded)
         false_rate = float(len(false_positives)) / len(excluded)
-        # print('FP: {0}, FR: {1:.3f}, EXPECTED: {2:.3f}'.format(false_positives, false_rate, 0.00001))
-        self.assertLess(
-            false_rate, 0.00001, 'False positive error rate exceeded!')
+        self.assertTrue(false_rate <= 0.00001,
+                        'False positive error rate exceeded!')
 
         # We also need to know that we can access all the keys we need
         self.assertEqual(self.bloom.keys(),
@@ -149,8 +148,8 @@ class Accuracytest(BaseTest):
 
         false_positives = self.bloom.intersection(excluded)
         false_rate = float(len(false_positives)) / len(excluded)
-        self.assertLess(
-            false_rate, 0.1, 'False positive error rate exceeded!')
+        self.assertTrue(false_rate <= 0.1,
+                        'False positive error rate exceeded!')
 
 
 if __name__ == '__main__':
