@@ -7,14 +7,14 @@ import string
 import unittest
 import pyreBloom
 
-count    = 10000
+count = 10000
 capacity = count * 2
-error    = 0.1
+error = 0.1
 
 print('Generating %i random test words' % (count * 2))
 start = -time.time()
-included  = [''.join(random.sample(string.lowercase, 20)) for i in range(count)]
-outcluded = [''.join(random.sample(string.lowercase, 20)) for i in range(count)]
+included = [''.join(random.sample(string.ascii, 20)) for i in range(count)]
+outcluded = [''.join(random.sample(string.ascii, 20)) for i in range(count)]
 start += time.time()
 print('Generated random test words in %fs' % start)
 
@@ -45,7 +45,7 @@ start += time.time()
 print('Serial test  : %fs (%f words / second)' % (start, count / start))
 
 falsePositives = p.contains(outcluded)
-falseRate      = float(len(falsePositives)) / len(outcluded)
+falseRate = float(len(falsePositives)) / len(outcluded)
 print('False positive rate: %f (%f expected)' % (falseRate, error))
 
 # Now, let's compare this to adding items to a set in redis
