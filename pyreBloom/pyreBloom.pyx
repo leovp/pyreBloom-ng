@@ -25,12 +25,12 @@ import random
 cimport bloom
 
 
-class pyreBloomException(Exception):
+class PyreBloomException(Exception):
     """Some sort of exception has happened internally"""
     pass
 
 
-cdef class pyreBloom(object):
+cdef class PyreBloom(object):
     cdef bloom.pyrebloomctxt context
     cdef bytes               key
 
@@ -47,7 +47,7 @@ cdef class pyreBloom(object):
         self.key = key
         if bloom.init_pyrebloom(&self.context, self.key, capacity,
                                 error, host, port, password, db):
-            raise pyreBloomException(self.context.ctxt.errstr)
+            raise PyreBloomException(self.context.ctxt.errstr)
 
     def __dealloc__(self):
         bloom.free_pyrebloom(&self.context)
@@ -63,7 +63,7 @@ cdef class pyreBloom(object):
             bloom.add(&self.context, value, len(value))
             r = bloom.add_complete(&self.context, 1)
         if r < 0:
-            raise pyreBloomException(self.context.ctxt.errstr)
+            raise PyreBloomException(self.context.ctxt.errstr)
         return r
 
     def add(self, value):
@@ -78,13 +78,13 @@ cdef class pyreBloom(object):
             r = [bloom.check(&self.context, v, len(v)) for v in value]
             r = [bloom.check_next(&self.context) for i in range(len(value))]
             if min(r) < 0:
-                raise pyreBloomException(self.context.ctxt.errstr)
+                raise PyreBloomException(self.context.ctxt.errstr)
             return [v for v, included in zip(value, r) if included]
         else:
             bloom.check(&self.context, value, len(value))
             r = bloom.check_next(&self.context)
             if r < 0:
-                raise pyreBloomException(self.context.ctxt.errstr)
+                raise PyreBloomException(self.context.ctxt.errstr)
             return bool(r)
 
     def __contains__(self, value):
