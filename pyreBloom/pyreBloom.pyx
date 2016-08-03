@@ -1,4 +1,5 @@
 # Copyright (c) 2011 SEOmoz
+# Copyright (c) 2016 leovp
 # 
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -62,8 +63,7 @@ cdef class PyreBloom(object):
         if not isinstance(value, bytes):
             raise TypeError('Only byte-strings are allowed!')
 
-        bloom.add(&self.context, value, len(value))
-        r = bloom.add_complete(&self.context, 1)
+        r = bloom.add_one(&self.context, value, len(value))
         if r < 0:
             raise PyreBloomException(self.context.ctxt.errstr)
 
