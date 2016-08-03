@@ -5,7 +5,7 @@ import redis
 import random
 import string
 import unittest
-import pyreBloom
+from pyreBloom import PyreBloom
 
 count = 10000
 capacity = count * 2
@@ -18,7 +18,7 @@ outcluded = [''.join(random.sample(string.ascii_lowercase, 20)) for i in range(c
 start += time.time()
 print('Generated random test words in %fs' % start)
 
-p = pyreBloom.pyreBloom('pyreBloomTesting', capacity, error)
+p = PyreBloom(b'pyreBloomTesting', capacity, error)
 p.delete()
 
 print('Filter using %i hash functions and %i bits' % (p.hashes, p.bits))
