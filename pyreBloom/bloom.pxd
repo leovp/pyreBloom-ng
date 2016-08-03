@@ -50,7 +50,6 @@ cdef extern from "bloom.h":
     
     bint add(pyrebloomctxt *ctxt, char *data, uint32_t data_size)
     bint add_one(pyrebloomctxt *ctxt, char *data, uint32_t data_size)
-    bint add_many(pyrebloomctxt *ctxt, char *data, uint32_t data_size)
     int add_complete(pyrebloomctxt *ctxt, uint32_t count)
     
     bint check(pyrebloomctxt *ctxt, char *data, uint32_t data_size)
