@@ -134,6 +134,45 @@ int free_pyrebloom(pyrebloomctxt * ctxt) {
     return PYREBLOOM_OK;
 }
 
+int add_one(pyrebloomctxt * ctxt, const char * data, uint32_t data_size) {
+    uint32_t ct = 0, total = 0, count = 1;
+    redisReply *reply = NULL;
+
+    for (uint32_t i = 0; i < ctxt->hashes; ++i) {
+        uint64_t hashed_data = hash(data, data_size, ctxt->seeds[i], ctxt->bits);
+        redisAppendCommand(ctxt->ctxt, "SETBIT %s %lu 1",
+            ctxt->keys[hashed_data / max_bits_per_key], hashed_data % max_bits_per_key);
+    }
+
+    for (uint32_t i = 0, ct = 0; i < ctxt->hashes; ++i) {
+        /* Make sure that we were able to read a reply. Otherwise, provide
+         * an error response */
+        if (redisGetReply(ctxt->ctxt, (void**)(&reply)) == REDIS_ERR) {
+            strncpy(ctxt->ctxt->errstr, "No pending replies", errstr_size);
+            ctxt->ctxt->err = PYREBLOOM_ERROR;
+            return PYREBLOOM_ERROR;
+        }
+
+        /* Consume and read the response */
+        if (reply->type == REDIS_REPLY_ERROR) {
+            ctxt->ctxt->err = PYREBLOOM_ERROR;
+            strncpy(ctxt->ctxt->errstr, reply->str, errstr_size);
+        } else {
+            ct += reply->integer;
+        }
+        freeReplyObject(reply);
+    }
+    if (ct == ctxt->hashes) {
+        total = 1;
+    }
+
+    if (ctxt->ctxt->err == PYREBLOOM_ERROR) {
+        return PYREBLOOM_ERROR;
+    }
+
+    return count - total;
+}
+
 int add(pyrebloomctxt * ctxt, const char * data, uint32_t len) {
     uint32_t i;
     for (i = 0; i < ctxt->hashes; ++i) {

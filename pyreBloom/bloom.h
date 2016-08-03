@@ -51,6 +51,7 @@ int init_pyrebloom(pyrebloomctxt * ctxt, char * key, uint32_t capacity, double e
 int free_pyrebloom(pyrebloomctxt * ctxt);
 
 int add(pyrebloomctxt * ctxt, const char * data, uint32_t len);
+int add_one(pyrebloomctxt *ctxt, const char *data, uint32_t data_size);
 int add_complete(pyrebloomctxt * ctxt, uint32_t count);
 
 int check(pyrebloomctxt * ctxt, const char * data, uint32_t len);
