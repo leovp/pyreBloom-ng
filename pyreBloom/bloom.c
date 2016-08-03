@@ -145,12 +145,12 @@ int add(pyrebloomctxt * ctxt, const char * data, uint32_t len) {
 }
 
 int add_complete(pyrebloomctxt * ctxt, uint32_t count) {
-    uint32_t i, j, ct = 0, total = 0;
+    uint32_t ct = 0, total = 0;
     redisReply * reply = NULL;
 
     ctxt->ctxt->err = PYREBLOOM_OK;
-    for (i = 0; i < count; ++i) {
-        for (j = 0, ct = 0; j < ctxt->hashes; ++j) {
+    for (uint32_t i = 0; i < count; ++i) {
+        for (uint32_t j = 0, ct = 0; j < ctxt->hashes; ++j) {
             /* Make sure that we were able to read a reply. Otherwise, provide
              * an error response */
             if (redisGetReply(ctxt->ctxt, (void**)(&reply)) == REDIS_ERR) {
