@@ -58,4 +58,4 @@ cdef extern from "bloom.h":
     
     bint delete(pyrebloomctxt *ctxt)
     
-    uint64_t hash(unsigned char *data, uint32_t len, uint64_t hash, uint64_t bits)
+    uint64_t hash(unsigned char *data, uint32_t data_size, uint64_t seed, uint64_t bits)

@@ -276,8 +276,8 @@ int delete(pyrebloomctxt *ctxt)
 /* From murmur.c */
 uint64_t MurmurHash64A(const void *key, uint32_t len, uint64_t seed);
 
-uint64_t hash(const char *data, uint32_t len, uint64_t seed, uint64_t bits) {
-    return MurmurHash64A(data, len, seed) % bits;
+uint64_t hash(const char *data, uint32_t data_size, uint64_t seed, uint64_t bits) {
+    return MurmurHash64A(data, data_size, seed) % bits;
 }
 
 /* It's a little tricky to get cython to include and build this file separately

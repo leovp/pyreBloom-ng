@@ -61,6 +61,6 @@ int check_next(pyrebloomctxt *ctxt);
 
 int delete(pyrebloomctxt *ctxt);
 
-uint64_t hash(const char *data, uint32_t len, uint64_t seed, uint64_t bits);
+uint64_t hash(const char *data, uint32_t data_size, uint64_t seed, uint64_t bits);
 
 #endif
