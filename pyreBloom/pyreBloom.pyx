@@ -42,8 +42,11 @@ cdef class PyreBloom(object):
         def __get__(self):
             return self.context.hashes
 
-    def __cinit__(self, key, capacity, error, host='127.0.0.1', port=6379,
-                  password='', db=0):
+    def __cinit__(self, key, capacity, error, host=b'127.0.0.1', port=6379,
+                  password=b'', db=0):
+        if not isinstance(key, bytes):
+            raise TypeError('Only byte-strings are allowed!')
+
         self.key = key
         if bloom.init_pyrebloom(&self.context, self.key, capacity,
                                 error, host, port, password, db):
