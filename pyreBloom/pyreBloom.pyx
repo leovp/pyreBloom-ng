@@ -58,37 +58,40 @@ cdef class PyreBloom(object):
     def delete(self):
         bloom.delete(&self.context)
 
-    def put(self, value):
-        if getattr(value, '__iter__', False):
-            r = [bloom.add(&self.context, v, len(v)) for v in value]
-            r = bloom.add_complete(&self.context, len(value))
-        else:
-            bloom.add(&self.context, value, len(value))
-            r = bloom.add_complete(&self.context, 1)
+    def add(self, value):
+        if not isinstance(value, bytes):
+            raise TypeError('Only byte-strings are allowed!')
+
+        bloom.add(&self.context, value, len(value))
+        r = bloom.add_complete(&self.context, 1)
         if r < 0:
             raise PyreBloomException(self.context.ctxt.errstr)
+
         return r
 
-    def add(self, value):
-        return self.put(value)
+    def update(self, values):
+        r = [bloom.add(&self.context, value, len(value)) for value in values]
+        r = bloom.add_complete(&self.context, len(values))
+        if r < 0:
+            raise PyreBloomException(self.context.ctxt.errstr)
 
-    def extend(self, values):
-        return self.put(values)
+        return r
+
+    def intersection(self, values):
+        r = [bloom.check(&self.context, value, len(value)) for value in values]
+        r = [bloom.check_next(&self.context) for _ in range(len(values))]
+        if min(r) < 0:
+            raise PyreBloomException(self.context.ctxt.errstr)
+
+        return [v for v, included in zip(values, r) if included]
 
     def contains(self, value):
-        # If the object is 'iterable'...
-        if getattr(value, '__iter__', False):
-            r = [bloom.check(&self.context, v, len(v)) for v in value]
-            r = [bloom.check_next(&self.context) for i in range(len(value))]
-            if min(r) < 0:
-                raise PyreBloomException(self.context.ctxt.errstr)
-            return [v for v, included in zip(value, r) if included]
-        else:
-            bloom.check(&self.context, value, len(value))
-            r = bloom.check_next(&self.context)
-            if r < 0:
-                raise PyreBloomException(self.context.ctxt.errstr)
-            return bool(r)
+        bloom.check(&self.context, value, len(value))
+        r = bloom.check_next(&self.context)
+        if r < 0:
+            raise PyreBloomException(self.context.ctxt.errstr)
+
+        return bool(r)
 
     def __contains__(self, value):
         return self.contains(value)
