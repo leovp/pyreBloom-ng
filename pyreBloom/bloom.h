@@ -55,7 +55,7 @@ int add(pyrebloomctxt *ctxt, const char *data, uint32_t data_size);
 int add_one(pyrebloomctxt *ctxt, const char *data, uint32_t data_size);
 int add_complete(pyrebloomctxt *ctxt, uint32_t count);
 
-int check(pyrebloomctxt *ctxt, const char *data, uint32_t len);
+int check(pyrebloomctxt *ctxt, const char *data, uint32_t data_size);
 int check_next(pyrebloomctxt *ctxt);
 
 int delete(pyrebloomctxt *ctxt);
