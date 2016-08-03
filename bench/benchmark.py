@@ -13,8 +13,8 @@ error = 0.1
 
 print('Generating %i random test words' % (count * 2))
 start = -time.time()
-included = [''.join(random.sample(string.ascii, 20)) for i in range(count)]
-outcluded = [''.join(random.sample(string.ascii, 20)) for i in range(count)]
+included = [''.join(random.sample(string.ascii_lowercase, 20)) for i in range(count)]
+outcluded = [''.join(random.sample(string.ascii_lowercase, 20)) for i in range(count)]
 start += time.time()
 print('Generated random test words in %fs' % start)
 
