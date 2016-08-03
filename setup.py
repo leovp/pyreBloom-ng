@@ -17,7 +17,8 @@ except ImportError:
 
 ext_modules = [Extension("pyreBloom", ext_files, libraries=['hiredis'],
                          library_dirs=['/usr/local/lib'],
-                         include_dirs=['/usr/local/include'])]
+                         include_dirs=['/usr/local/include'],
+                         extra_compile_args=['-std=c99'])]
 
 setup(
     name = 'pyreBloom',
