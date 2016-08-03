@@ -174,10 +174,10 @@ int add_one(pyrebloomctxt *ctxt, const char *data, uint32_t data_size)
     return count - total;
 }
 
-int add(pyrebloomctxt *ctxt, const char *data, uint32_t len)
+int add(pyrebloomctxt *ctxt, const char *data, uint32_t data_size)
 {
     for (uint32_t i = 0; i < ctxt->hashes; ++i) {
-        uint64_t d = hash(data, len, ctxt->seeds[i], ctxt->bits);
+        uint64_t d = hash(data, data_size, ctxt->seeds[i], ctxt->bits);
         redisAppendCommand(ctxt->ctxt, "SETBIT %s %lu 1",
             ctxt->keys[d / max_bits_per_key], d % max_bits_per_key);
     }
@@ -222,10 +222,10 @@ int add_complete(pyrebloomctxt *ctxt, uint32_t count)
     return count - total;
 }
 
-int check(pyrebloomctxt *ctxt, const char *data, uint32_t len)
+int check(pyrebloomctxt *ctxt, const char *data, uint32_t data_size)
 {
     for (uint32_t i = 0; i < ctxt->hashes; ++i) {
-        uint64_t d = hash(data, len, ctxt->seeds[i], ctxt->bits);
+        uint64_t d = hash(data, data_size, ctxt->seeds[i], ctxt->bits);
         redisAppendCommand(ctxt->ctxt, "GETBIT %s %lu",
             ctxt->keys[d / max_bits_per_key], d % max_bits_per_key);
     }

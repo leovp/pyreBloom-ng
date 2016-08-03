@@ -48,12 +48,12 @@ cdef extern from "bloom.h":
         char *password, uint32_t db)
     bint free_pyrebloom(pyrebloomctxt *ctxt)
     
-    bint add(pyrebloomctxt *ctxt, char *data, uint32_t len)
+    bint add(pyrebloomctxt *ctxt, char *data, uint32_t data_size)
     bint add_one(pyrebloomctxt *ctxt, char *data, uint32_t data_size)
     bint add_many(pyrebloomctxt *ctxt, char *data, uint32_t data_size)
     int add_complete(pyrebloomctxt *ctxt, uint32_t count)
     
-    bint check(pyrebloomctxt *ctxt, char *data, uint32_t len)
+    bint check(pyrebloomctxt *ctxt, char *data, uint32_t data_size)
     int check_next(pyrebloomctxt *ctxt)
     
     bint delete(pyrebloomctxt *ctxt)
