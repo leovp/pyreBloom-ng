@@ -32,29 +32,26 @@ const uint32_t max_bits_per_key = 0xFFFFFFFF;
 /* The size of the context error string */
 const size_t errstr_size = 128;
 
-int init_pyrebloom(
-    pyrebloomctxt * ctxt, char * key, uint32_t capacity, double error,
-    char* host, uint32_t port, char* password, uint32_t db) {
-    // Counter
-    uint32_t i;
-
+int init_pyrebloom(pyrebloomctxt *ctxt, char *key, uint32_t capacity, double error,
+    char *host, uint32_t port, char *password, uint32_t db)
+    {
     ctxt->capacity = capacity;
     ctxt->bits     = (uint64_t)(-(log(error) * capacity) / (log(2) * log(2)));
     ctxt->hashes   = (uint32_t)(ceil(log(2) * ctxt->bits / capacity));
     ctxt->error    = error;
-    ctxt->key      = (char *)(malloc(strlen(key)));
+    ctxt->key      = malloc(strlen(key));
     strncpy(ctxt->key, key, strlen(key));
-    ctxt->seeds    = (uint32_t *)(malloc(ctxt->hashes * sizeof(uint32_t)));
-    ctxt->password = (char *)(malloc(strlen(password)));
+    ctxt->seeds    = malloc(ctxt->hashes * sizeof(uint32_t));
+    ctxt->password = malloc(strlen(password));
     strncpy(ctxt->password, password, strlen(password));
 
     /* We'll need a certain number of strings here */
     ctxt->num_keys = (uint32_t)(
         ceil((float)(ctxt->bits) / max_bits_per_key));
-    ctxt->keys = (char**)(malloc(ctxt->num_keys * sizeof(char*)));
-    for (i = 0; i < ctxt->num_keys; ++i) {
+    ctxt->keys = malloc(ctxt->num_keys * sizeof(char*));
+    for (uint32_t i = 0; i < ctxt->num_keys; ++i) {
         size_t length = strlen(key) + 10;
-        ctxt->keys[i] = (char*)(malloc(length));
+        ctxt->keys[i] = malloc(length);
         snprintf(ctxt->keys[i], length, "%s.%i", key, i);
     }
 
@@ -73,7 +70,7 @@ int init_pyrebloom(
     uint32_t a = 1664525;
     uint32_t c = 1013904223;
     uint32_t x = 314159265;
-    for (i = 0; i < ctxt->hashes; ++i) {
+    for (uint32_t i = 0; i < ctxt->hashes; ++i) {
         ctxt->seeds[i] = x;
         x = a * x + c;
     }
@@ -127,15 +124,18 @@ int init_pyrebloom(
     return PYREBLOOM_OK;
 }
 
-int free_pyrebloom(pyrebloomctxt * ctxt) {
+int free_pyrebloom(pyrebloomctxt *ctxt)
+{
     if (ctxt->seeds) {
         free(ctxt->seeds);
     }
     redisFree(ctxt->ctxt);
+
     return PYREBLOOM_OK;
 }
 
-int add_one(pyrebloomctxt * ctxt, const char * data, uint32_t data_size) {
+int add_one(pyrebloomctxt *ctxt, const char *data, uint32_t data_size)
+{
     uint32_t ct = 0, total = 0, count = 1;
     redisReply *reply = NULL;
 
@@ -174,17 +174,19 @@ int add_one(pyrebloomctxt * ctxt, const char * data, uint32_t data_size) {
     return count - total;
 }
 
-int add(pyrebloomctxt * ctxt, const char * data, uint32_t len) {
-    uint32_t i;
-    for (i = 0; i < ctxt->hashes; ++i) {
+int add(pyrebloomctxt *ctxt, const char *data, uint32_t len)
+{
+    for (uint32_t i = 0; i < ctxt->hashes; ++i) {
         uint64_t d = hash(data, len, ctxt->seeds[i], ctxt->bits);
         redisAppendCommand(ctxt->ctxt, "SETBIT %s %lu 1",
             ctxt->keys[d / max_bits_per_key], d % max_bits_per_key);
     }
+
     return PYREBLOOM_OK;
 }
 
-int add_complete(pyrebloomctxt * ctxt, uint32_t count) {
+int add_complete(pyrebloomctxt *ctxt, uint32_t count)
+{
     uint32_t ct = 0, total = 0;
     redisReply * reply = NULL;
 
@@ -215,27 +217,29 @@ int add_complete(pyrebloomctxt * ctxt, uint32_t count) {
 
     if (ctxt->ctxt->err == PYREBLOOM_ERROR) {
         return PYREBLOOM_ERROR;
-    } else {
-        return count - total;
     }
+
+    return count - total;
 }
 
-int check(pyrebloomctxt * ctxt, const char * data, uint32_t len) {
-    uint32_t i;
-    for (i = 0; i < ctxt->hashes; ++i) {
+int check(pyrebloomctxt *ctxt, const char *data, uint32_t len)
+{
+    for (uint32_t i = 0; i < ctxt->hashes; ++i) {
         uint64_t d = hash(data, len, ctxt->seeds[i], ctxt->bits);
         redisAppendCommand(ctxt->ctxt, "GETBIT %s %lu",
             ctxt->keys[d / max_bits_per_key], d % max_bits_per_key);
     }
+
     return PYREBLOOM_OK;
 }
 
-int check_next(pyrebloomctxt * ctxt) {
-    uint32_t i;
+int check_next(pyrebloomctxt *ctxt)
+{
     int result = 1;
-    redisReply * reply = NULL;
+    redisReply *reply = NULL;
     ctxt->ctxt->err = PYREBLOOM_OK;
-    for (i = 0; i < ctxt->hashes; ++i) {
+
+    for (uint32_t i = 0; i < ctxt->hashes; ++i) {
         if (redisGetReply(ctxt->ctxt, (void**)(&reply)) == REDIS_ERR) {
             strncpy(ctxt->ctxt->errstr, "No pending replies", errstr_size);
             ctxt->ctxt->err = PYREBLOOM_ERROR;
@@ -249,17 +253,20 @@ int check_next(pyrebloomctxt * ctxt) {
         result = result && reply->integer;
         freeReplyObject(reply);
     }
+
     if (ctxt->ctxt->err == PYREBLOOM_ERROR) {
         return PYREBLOOM_ERROR;
     }
+
     return result;
 }
 
-int delete(pyrebloomctxt * ctxt) {
+int delete(pyrebloomctxt *ctxt)
+{
     uint32_t num_keys = (uint32_t)(
         ceil((float)(ctxt->bits) / max_bits_per_key));
-    uint32_t i = 0;
-    for (; i < num_keys; ++i) {
+
+    for (uint32_t i = 0; i < num_keys; ++i) {
         freeReplyObject(redisCommand(ctxt->ctxt, "DEL %s", ctxt->keys[i]));
     }
 
@@ -267,9 +274,9 @@ int delete(pyrebloomctxt * ctxt) {
 }
 
 /* From murmur.c */
-uint64_t MurmurHash64A(const void * key, uint32_t len, uint64_t seed);
+uint64_t MurmurHash64A(const void *key, uint32_t len, uint64_t seed);
 
-uint64_t hash(const char* data, uint32_t len, uint64_t seed, uint64_t bits) {
+uint64_t hash(const char *data, uint32_t len, uint64_t seed, uint64_t bits) {
     return MurmurHash64A(data, len, seed) % bits;
 }
 

@@ -48,18 +48,19 @@ typedef struct {
     char         ** keys;
 } pyrebloomctxt;
 
-int init_pyrebloom(pyrebloomctxt * ctxt, char * key, uint32_t capacity, double error, char* host, uint32_t port, char* password, uint32_t db);
-int free_pyrebloom(pyrebloomctxt * ctxt);
+int init_pyrebloom(pyrebloomctxt *ctxt, char *key, uint32_t capacity, double error, char *host, uint32_t port, char *password, uint32_t db);
+int free_pyrebloom(pyrebloomctxt *ctxt);
 
-int add(pyrebloomctxt * ctxt, const char * data, uint32_t len);
+int add(pyrebloomctxt *ctxt, const char *data, uint32_t len);
 int add_one(pyrebloomctxt *ctxt, const char *data, uint32_t data_size);
-int add_complete(pyrebloomctxt * ctxt, uint32_t count);
+int add_many(pyrebloomctxt *ctxt, const char *data, uint32_t data_size);
+int add_complete(pyrebloomctxt *ctxt, uint32_t count);
 
-int check(pyrebloomctxt * ctxt, const char * data, uint32_t len);
-int check_next(pyrebloomctxt * ctxt);
+int check(pyrebloomctxt *ctxt, const char *data, uint32_t len);
+int check_next(pyrebloomctxt *ctxt);
 
-int delete(pyrebloomctxt * ctxt);
+int delete(pyrebloomctxt *ctxt);
 
-uint64_t hash(const char* data, uint32_t len, uint64_t seed, uint64_t bits);
+uint64_t hash(const char *data, uint32_t len, uint64_t seed, uint64_t bits);
 
 #endif

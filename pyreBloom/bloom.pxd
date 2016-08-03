@@ -43,18 +43,19 @@ cdef extern from "bloom.h":
         redisContext  * ctxt
         char         ** keys
 
-    bint init_pyrebloom(pyrebloomctxt * ctxt, unsigned char * key,
-        uint32_t capacity, float error, char* host, uint32_t port,
-        char* password, uint32_t db)
-    bint free_pyrebloom(pyrebloomctxt * ctxt)
+    bint init_pyrebloom(pyrebloomctxt *ctxt, unsigned char *key,
+        uint32_t capacity, float error, char *host, uint32_t port,
+        char *password, uint32_t db)
+    bint free_pyrebloom(pyrebloomctxt *ctxt)
     
-    bint add(pyrebloomctxt * ctxt, char * data, uint32_t len)
+    bint add(pyrebloomctxt *ctxt, char *data, uint32_t len)
     bint add_one(pyrebloomctxt *ctxt, char *data, uint32_t data_size)
-    int add_complete(pyrebloomctxt * ctxt, uint32_t count)
+    bint add_many(pyrebloomctxt *ctxt, char *data, uint32_t data_size)
+    int add_complete(pyrebloomctxt *ctxt, uint32_t count)
     
-    bint check(pyrebloomctxt * ctxt, char * data, uint32_t len)
-    int check_next(pyrebloomctxt * ctxt)
+    bint check(pyrebloomctxt *ctxt, char *data, uint32_t len)
+    int check_next(pyrebloomctxt *ctxt)
     
-    bint delete(pyrebloomctxt * ctxt)
+    bint delete(pyrebloomctxt *ctxt)
     
-    uint64_t hash(unsigned char * data, uint32_t len, uint64_t hash, uint64_t bits)
+    uint64_t hash(unsigned char *data, uint32_t len, uint64_t hash, uint64_t bits)
