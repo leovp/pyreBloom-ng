@@ -2,13 +2,12 @@ pyreBloom-ng
 ============
 
 | Python library which implements a Redis-backed Bloom filter.
-| This is a fork of `pyreBloom <https://github.com/seomoz/pyreBloom>`_, but a bit faster,
-| has a better API and supports Python 2.6+, 3.3+, PyPy 2 and PyPy 3.
+| This is a fork of `pyreBloom <https://github.com/seomoz/pyreBloom>`_, but a bit faster, has a better API and supports Python 2.6+, 3.3+, PyPy 2 and PyPy 3.
 
 Installation
 ------------
 
-`pyreBloom-ng` requires `hiredis` library, `Cython` and a C compiler.
+``pyreBloom-ng`` requires ``hiredis`` library, ``Cython`` and a C compiler.
 
 Install hiredis:
 ::
@@ -68,11 +67,11 @@ Now you can perform membership tests:
     f.update([b'0', b'1', b'2', b'3', b'4'])
     found = f.intersection([b'3', b'4', b'5', b'6'])
     # Alternative: found = f & [b'3', b'4', b'5', b'6']
-    # `found` is now [b'3', b'4']
+    # found is now [b'3', b'4']
 
 License
 -------
 
-Both `pyreBloom` and `pyreBloom-ng` are distributed under the terms of the MIT license.
+Both ``pyreBloom`` and ``pyreBloom-ng`` are distributed under the terms of the MIT license.
 
 See the bundled `LICENSE <https://github.com/leovp/pyreBloom-ng/blob/master/LICENSE>`_ file for more details.
