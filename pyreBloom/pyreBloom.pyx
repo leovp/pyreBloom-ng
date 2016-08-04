@@ -96,6 +96,13 @@ cdef class PyreBloom(object):
     def __contains__(self, value):
         return self.contains(value)
 
+    def __and__(self, values):
+        return self.intersection(values)
+
+    def __iadd__(self, values):
+        self.update(values)
+        return self
+
     def keys(self):
         """Return a list of the keys used in this bloom filter"""
         return [self.context.keys[i] for i in range(self.context.num_keys)]
